@@ -36,11 +36,13 @@ func Setup(level string, format string, outputPath string) error {
 	switch strings.ToLower(format) {
 	case "json":
 		handler = slog.NewJSONHandler(output, &slog.HandlerOptions{
-			Level: logLevel,
+			Level:     logLevel,
+			AddSource: false,
 		})
 	default:
 		handler = slog.NewTextHandler(output, &slog.HandlerOptions{
-			Level: logLevel,
+			Level:     logLevel,
+			AddSource: false,
 		})
 	}
 
@@ -48,7 +50,27 @@ func Setup(level string, format string, outputPath string) error {
 	return nil
 }
 
-// WithContext adds context fields to logger
+// WithContext adds context fields to the logger
 func WithContext(key string, value interface{}) *slog.Logger {
 	return slog.Default().With(key, value)
+}
+
+// Debug logs a debug message
+func Debug(msg string, args ...interface{}) {
+	slog.Debug(msg, args...)
+}
+
+// Info logs an info message
+func Info(msg string, args ...interface{}) {
+	slog.Info(msg, args...)
+}
+
+// Warn logs a warning message
+func Warn(msg string, args ...interface{}) {
+	slog.Warn(msg, args...)
+}
+
+// Error logs an error message
+func Error(msg string, args ...interface{}) {
+	slog.Error(msg, args...)
 }

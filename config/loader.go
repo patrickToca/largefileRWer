@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/load"
 )
+
+// The rest of the file remains the same as above...
 
 // Loader handles loading and merging CUE configurations
 type Loader struct {
@@ -25,16 +26,14 @@ func NewLoader() *Loader {
 
 	// Load the base schema
 	instances := load.Instances([]string{"."}, &load.Config{
-		Dir:        ".",
-		Package:    "config",
-		Tags:       nil,
-		Overlay:    nil,
-		Stdin:      nil,
-		DataFiles:  true,
-		DataMode:   load.DataMode(0),
-		ModuleRoot: "",
-		Tests:      false,
-		Tools:      false,
+		Dir:       ".",
+		Package:   "config",
+		Tags:      nil,
+		Overlay:   nil,
+		Stdin:     nil,
+		DataFiles: true,
+		Tests:     false,
+		Tools:     false,
 	})
 
 	if len(instances) == 0 {
@@ -69,7 +68,7 @@ func (l *Loader) LoadFromBytes(data []byte) (*Config, error) {
 		return nil, fmt.Errorf("failed to parse CUE: %w", val.Err())
 	}
 
-	// Validate against schema if available
+	// Apply defaults if base schema exists
 	if l.base.Exists() {
 		val = l.base.Unify(val)
 		if err := val.Validate(cue.Concrete(true)); err != nil {
@@ -81,6 +80,11 @@ func (l *Loader) LoadFromBytes(data []byte) (*Config, error) {
 	var config Config
 	if err := val.Decode(&config); err != nil {
 		return nil, fmt.Errorf("failed to decode configuration: %w", err)
+	}
+
+	// Apply defaults for time.Duration fields
+	if config.ProgressInterval == 0 {
+		config.ProgressInterval = 30
 	}
 
 	return &config, nil
@@ -113,6 +117,10 @@ func (l *Loader) LoadFromJSON(path string) (*Config, error) {
 	var config Config
 	if err := val.Decode(&config); err != nil {
 		return nil, fmt.Errorf("failed to decode configuration: %w", err)
+	}
+
+	if config.ProgressInterval == 0 {
+		config.ProgressInterval = 30
 	}
 
 	return &config, nil
@@ -173,6 +181,12 @@ func (l *Loader) LoadFromEnvironment() (*Config, error) {
 	if val := os.Getenv("LF_CHECKPOINT_DIR"); val != "" {
 		envMap["checkpoint_dir"] = val
 	}
+	if val := os.Getenv("LF_PROGRESS_INTERVAL"); val != "" {
+		var interval int
+		if _, err := fmt.Sscanf(val, "%d", &interval); err == nil {
+			envMap["progress_interval"] = interval
+		}
+	}
 
 	if len(envMap) == 0 {
 		return nil, nil
@@ -193,6 +207,10 @@ func (l *Loader) LoadFromEnvironment() (*Config, error) {
 	var config Config
 	if err := val.Decode(&config); err != nil {
 		return nil, fmt.Errorf("failed to decode environment: %w", err)
+	}
+
+	if config.ProgressInterval == 0 {
+		config.ProgressInterval = 30
 	}
 
 	return &config, nil
@@ -225,6 +243,10 @@ func (l *Loader) Merge(configs ...*Config) (*Config, error) {
 		var newConfig Config
 		if err := unified.Decode(&newConfig); err != nil {
 			return nil, fmt.Errorf("failed to decode merged config: %w", err)
+		}
+
+		if newConfig.ProgressInterval == 0 {
+			newConfig.ProgressInterval = 30
 		}
 
 		merged = &newConfig

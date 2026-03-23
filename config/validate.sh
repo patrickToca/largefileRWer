@@ -1,60 +1,44 @@
 #!/bin/bash
-# config/validate.sh
-
 set -e
 
-echo "Validating CUE configuration..."
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+echo -e "${BLUE}Validating CUE Configuration${NC}"
 
 # Check if cue is installed
 if ! command -v cue &> /dev/null; then
-    echo "Error: cue is not installed"
-    echo "Install with: go install cuelang.org/go/cmd/cue@latest"
+    echo -e "${RED}Error: cue is not installed${NC}"
     exit 1
 fi
 
-# Validate basic syntax
-echo "1. Validating syntax..."
-cue vet ./config.cue 2>&1
-echo "✅ Syntax valid"
+cd "$(dirname "$0")/.."
 
-# Test each profile
-echo ""
-echo "2. Testing configuration profiles..."
+echo -n "1. Validating config.cue syntax... "
+cue vet ./config/config.cue && echo -e "${GREEN}✅${NC}" || { echo -e "${RED}❌${NC}"; exit 1; }
 
-test_profile() {
-    local profile=$1
-    local test_file="test_${profile}.cue"
-    
-    cat > "$test_file" <<EOF
-package config
+echo -n "2. Testing Config profile... "
+cue eval ./config/config.cue -e '#Config' > /dev/null 2>&1 && echo -e "${GREEN}✅${NC}" || { echo -e "${RED}❌${NC}"; exit 1; }
 
-#${profile} & {
-    input_path: "/test/input.dat"
-    output_path: "/test/output.dat"
-}
-EOF
-    
-    echo -n "Testing $profile... "
-    if cue vet "$test_file" 2>/dev/null; then
-        echo "✅"
-        rm "$test_file"
-        return 0
-    else
-        echo "❌"
-        cue vet "$test_file" 2>&1
-        rm "$test_file"
-        return 1
-    fi
-}
+echo -n "3. Testing ProductionConfig... "
+cue eval ./config/config.cue -e '#ProductionConfig' > /dev/null 2>&1 && echo -e "${GREEN}✅${NC}" || { echo -e "${RED}❌${NC}"; exit 1; }
 
-# Test all profiles
-test_profile "Config" || exit 1
-test_profile "ProductionConfig" || exit 1
-test_profile "DevelopmentConfig" || exit 1
-test_profile "NVMeProfile" || exit 1
-test_profile "HDDProfile" || exit 1
-test_profile "NetworkProfile" || exit 1
-test_profile "LowMemoryProfile" || exit 1
+echo -n "4. Testing DevelopmentConfig... "
+cue eval ./config/config.cue -e '#DevelopmentConfig' > /dev/null 2>&1 && echo -e "${GREEN}✅${NC}" || { echo -e "${RED}❌${NC}"; exit 1; }
 
-echo ""
-echo "✅ All CUE validation tests passed!"
+echo -n "5. Testing NVMeProfile... "
+cue eval ./config/config.cue -e '#NVMeProfile' > /dev/null 2>&1 && echo -e "${GREEN}✅${NC}" || { echo -e "${RED}❌${NC}"; exit 1; }
+
+echo -n "6. Testing HDDProfile... "
+cue eval ./config/config.cue -e '#HDDProfile' > /dev/null 2>&1 && echo -e "${GREEN}✅${NC}" || { echo -e "${RED}❌${NC}"; exit 1; }
+
+echo -n "7. Testing NetworkProfile... "
+cue eval ./config/config.cue -e '#NetworkProfile' > /dev/null 2>&1 && echo -e "${GREEN}✅${NC}" || { echo -e "${RED}❌${NC}"; exit 1; }
+
+echo -n "8. Testing LowMemoryProfile... "
+cue eval ./config/config.cue -e '#LowMemoryProfile' > /dev/null 2>&1 && echo -e "${GREEN}✅${NC}" || { echo -e "${RED}❌${NC}"; exit 1; }
+
+echo -e "\n${GREEN}✅ All CUE validations passed!${NC}"

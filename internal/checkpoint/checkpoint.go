@@ -10,9 +10,9 @@ import (
 
 // Manager handles checkpoint operations
 type Manager struct {
-	path          string
-	mu            sync.RWMutex
-	completed     map[int]bool
+	path           string
+	mu             sync.RWMutex
+	completed      map[int]bool
 	lastCheckpoint int
 }
 
