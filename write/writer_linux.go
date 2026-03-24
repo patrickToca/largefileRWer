@@ -3,8 +3,8 @@
 package write
 
 import (
-	"os"
 	"golang.org/x/sys/unix"
+	"os"
 )
 
 // enableDirectIO enables direct I/O on Linux
