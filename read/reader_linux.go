@@ -3,8 +3,10 @@
 package read
 
 import (
-	"golang.org/x/sys/unix"
+	"log/slog"
 	"os"
+
+	"golang.org/x/sys/unix"
 )
 
 // enableDirectIO enables direct I/O on Linux
