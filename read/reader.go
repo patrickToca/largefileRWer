@@ -328,9 +328,9 @@ func (r *Reader) readChunk(file *os.File, chunkID int, offset, length int64) (*C
 // readWithMmap uses memory-mapped I/O for random access patterns
 func (r *Reader) readWithMmap(ctx context.Context, fileSize int64,
 	chunkChan chan<- *Chunk, errChan chan<- error) {
-	
+
 	slog.Info("Using mmap for reading", "file_size_gb", float64(fileSize)/(1024*1024*1024))
-	
+
 	// Note: mmap implementation would go here
 	// For now, fall back to parallel chunks
 	slog.Warn("mmap not fully implemented, falling back to parallel chunks")

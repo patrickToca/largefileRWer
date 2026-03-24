@@ -226,7 +226,7 @@ func (l *Loader) Merge(configs ...*Config) (*Config, error) {
 	// Merge each subsequent config
 	for i := 1; i < len(configs); i++ {
 		cfg := configs[i]
-		
+
 		// Only override if the value is non-zero (or specifically set)
 		if cfg.InputPath != "" {
 			merged.InputPath = cfg.InputPath

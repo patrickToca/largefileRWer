@@ -3,8 +3,8 @@
 package write
 
 import (
-	"os"
 	"log/slog"
+	"os"
 )
 
 // enableDirectIO is a no-op on non-Linux platforms
