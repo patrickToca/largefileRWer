@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"reflect"
 	"strings"
 
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	"cuelang.org/go/cue/load"
 )
-
-// The rest of the file remains the same as above...
 
 // Loader handles loading and merging CUE configurations
 type Loader struct {
@@ -68,7 +67,6 @@ func (l *Loader) LoadFromBytes(data []byte) (*Config, error) {
 		return nil, fmt.Errorf("failed to parse CUE: %w", val.Err())
 	}
 
-	// Apply defaults if base schema exists
 	if l.base.Exists() {
 		val = l.base.Unify(val)
 		if err := val.Validate(cue.Concrete(true)); err != nil {
@@ -76,13 +74,11 @@ func (l *Loader) LoadFromBytes(data []byte) (*Config, error) {
 		}
 	}
 
-	// Decode to Go struct
 	var config Config
 	if err := val.Decode(&config); err != nil {
 		return nil, fmt.Errorf("failed to decode configuration: %w", err)
 	}
 
-	// Apply defaults for time.Duration fields
 	if config.ProgressInterval == 0 {
 		config.ProgressInterval = 30
 	}
@@ -217,39 +213,96 @@ func (l *Loader) LoadFromEnvironment() (*Config, error) {
 }
 
 // Merge merges multiple configurations (later takes precedence)
+// Only non-zero values from later configs override earlier ones
 func (l *Loader) Merge(configs ...*Config) (*Config, error) {
 	if len(configs) == 0 {
 		return nil, fmt.Errorf("no configurations to merge")
 	}
 
-	merged := configs[0]
+	// Start with a copy of the first config
+	merged := &Config{}
+	*merged = *configs[0]
 
+	// Merge each subsequent config
 	for i := 1; i < len(configs); i++ {
-		val1 := l.ctx.Encode(merged)
-		if val1.Err() != nil {
-			return nil, fmt.Errorf("failed to encode config %d: %w", i-1, val1.Err())
-		}
+		cfg := configs[i]
 
-		val2 := l.ctx.Encode(configs[i])
-		if val2.Err() != nil {
-			return nil, fmt.Errorf("failed to encode config %d: %w", i, val2.Err())
+		// Only override if the value is non-zero (or specifically set)
+		if cfg.InputPath != "" {
+			merged.InputPath = cfg.InputPath
 		}
-
-		unified := val1.Unify(val2)
-		if err := unified.Validate(cue.Concrete(true)); err != nil {
-			return nil, fmt.Errorf("merge conflict: %w", err)
+		if cfg.OutputPath != "" {
+			merged.OutputPath = cfg.OutputPath
 		}
-
-		var newConfig Config
-		if err := unified.Decode(&newConfig); err != nil {
-			return nil, fmt.Errorf("failed to decode merged config: %w", err)
+		if cfg.Workers > 0 {
+			merged.Workers = cfg.Workers
 		}
-
-		if newConfig.ProgressInterval == 0 {
-			newConfig.ProgressInterval = 30
+		if cfg.BufferSizeKB > 0 {
+			merged.BufferSizeKB = cfg.BufferSizeKB
 		}
-
-		merged = &newConfig
+		if cfg.ChunkSizeMB > 0 {
+			merged.ChunkSizeMB = cfg.ChunkSizeMB
+		}
+		if cfg.MaxWorkers > 0 {
+			merged.MaxWorkers = cfg.MaxWorkers
+		}
+		if cfg.PageSize > 0 {
+			merged.PageSize = cfg.PageSize
+		}
+		if cfg.UseMmap {
+			merged.UseMmap = cfg.UseMmap
+		}
+		if cfg.UseDirectIO {
+			merged.UseDirectIO = cfg.UseDirectIO
+		}
+		if cfg.UseAsyncIO {
+			merged.UseAsyncIO = cfg.UseAsyncIO
+		}
+		if cfg.VerifyChecksum {
+			merged.VerifyChecksum = cfg.VerifyChecksum
+		}
+		if cfg.ChecksumAlgorithm != "" && cfg.ChecksumAlgorithm != "sha256" {
+			merged.ChecksumAlgorithm = cfg.ChecksumAlgorithm
+		}
+		if cfg.GCPercent > 0 {
+			merged.GCPercent = cfg.GCPercent
+		}
+		if cfg.MemoryLimitGB > 0 {
+			merged.MemoryLimitGB = cfg.MemoryLimitGB
+		}
+		if cfg.LogLevel != "" {
+			merged.LogLevel = cfg.LogLevel
+		}
+		if cfg.LogFormat != "" {
+			merged.LogFormat = cfg.LogFormat
+		}
+		if cfg.LogFilePath != "" {
+			merged.LogFilePath = cfg.LogFilePath
+		}
+		if cfg.ProgressInterval > 0 {
+			merged.ProgressInterval = cfg.ProgressInterval
+		}
+		if cfg.EnableVerbose {
+			merged.EnableVerbose = cfg.EnableVerbose
+		}
+		if cfg.EnableCheckpoint {
+			merged.EnableCheckpoint = cfg.EnableCheckpoint
+		}
+		if cfg.CheckpointDir != "" {
+			merged.CheckpointDir = cfg.CheckpointDir
+		}
+		if cfg.CheckpointInterval > 0 {
+			merged.CheckpointInterval = cfg.CheckpointInterval
+		}
+		if cfg.DirectIOAlignment > 0 {
+			merged.DirectIOAlignment = cfg.DirectIOAlignment
+		}
+		if cfg.QueueSize > 0 {
+			merged.QueueSize = cfg.QueueSize
+		}
+		if cfg.Timeout > 0 {
+			merged.Timeout = cfg.Timeout
+		}
 	}
 
 	return merged, nil
@@ -303,7 +356,6 @@ func (c *Config) Save(path string) error {
 
 // detectStorageType attempts to detect the storage type
 func detectStorageType() string {
-	// Check if running on network filesystem
 	if _, err := os.Stat("/proc/mounts"); err == nil {
 		data, _ := os.ReadFile("/proc/mounts")
 		if strings.Contains(string(data), "nfs") || strings.Contains(string(data), "cifs") {
@@ -311,10 +363,14 @@ func detectStorageType() string {
 		}
 	}
 
-	// Check for NVMe devices
 	if _, err := os.Stat("/dev/nvme0"); err == nil {
 		return "nvme"
 	}
 
 	return "hdd"
+}
+
+// Helper to check if a value is zero
+func isZero(v interface{}) bool {
+	return reflect.ValueOf(v).IsZero()
 }

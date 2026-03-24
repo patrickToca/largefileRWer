@@ -9,7 +9,6 @@ import (
 	"os"
 	"sync"
 
-	"golang.org/x/sys/unix"
 	"pmjtoca/largefileRWer/config"
 	"pmjtoca/largefileRWer/internal/metrics"
 )
@@ -83,7 +82,7 @@ func NewWriter(cfg *config.Config) (*Writer, error) {
 	}, nil
 }
 
-// WriteChunksOrdered writes chunks in the correct order
+// WriteChunksOrdered writes chunks in the correct order, handling out-of-order arrivals
 func (w *Writer) WriteChunksOrdered(ctx context.Context, chunkChan <-chan *WriteChunk) error {
 	file, err := os.OpenFile(w.cfg.OutputPath, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
@@ -112,6 +111,7 @@ func (w *Writer) WriteChunksOrdered(ctx context.Context, chunkChan <-chan *Write
 	}
 }
 
+// processChunk handles incoming chunks, buffering out-of-order chunks
 func (w *Writer) processChunk(file *os.File, chunk *WriteChunk) error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
@@ -129,6 +129,7 @@ func (w *Writer) processChunk(file *os.File, chunk *WriteChunk) error {
 		}
 	}
 
+	// Store chunk
 	w.pendingChunks[chunk.ID] = chunk
 
 	// Write all consecutive chunks
@@ -146,14 +147,15 @@ func (w *Writer) processChunk(file *os.File, chunk *WriteChunk) error {
 		w.metrics.AddBytesWritten(int64(len(nextChunk.Data)))
 		w.metrics.AddChunkWritten()
 
-		delete(w.pendingChunks, w.nextChunkID)
-		w.nextChunkID++
-
+		// Log progress periodically
 		if w.nextChunkID%w.cfg.CheckpointInterval == 0 {
 			slog.Debug("Write progress",
 				"chunks_written", w.nextChunkID,
 				"bytes_written_mb", w.metrics.GetBytesWritten()/(1024*1024))
 		}
+
+		delete(w.pendingChunks, w.nextChunkID)
+		w.nextChunkID++
 	}
 
 	return nil
@@ -168,6 +170,7 @@ func (w *Writer) WriteChunk(ctx context.Context, chunk *WriteChunk) error {
 		defer func() { <-w.workerPool }()
 	}
 
+	// Verify checksum if enabled
 	if w.cfg.VerifyChecksum {
 		calculated := w.hashFunc(chunk.Data)
 		if len(calculated) != len(chunk.Checksum) {
@@ -201,6 +204,113 @@ func (w *Writer) WriteChunk(ctx context.Context, chunk *WriteChunk) error {
 	return nil
 }
 
+// WriteChunksParallel writes chunks in parallel (for independent chunks)
+func (w *Writer) WriteChunksParallel(ctx context.Context, chunks []*WriteChunk) error {
+	if len(chunks) == 0 {
+		return nil
+	}
+
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(chunks))
+
+	// Limit concurrent writes
+	semaphore := make(chan struct{}, w.cfg.Workers)
+
+	for _, chunk := range chunks {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
+		wg.Add(1)
+		go func(c *WriteChunk) {
+			defer wg.Done()
+
+			semaphore <- struct{}{}
+			defer func() { <-semaphore }()
+
+			if err := w.WriteChunk(ctx, c); err != nil {
+				errChan <- err
+			}
+		}(chunk)
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	// Check for errors
+	for err := range errChan {
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// WriteSequential writes data sequentially (simplest approach)
+func (w *Writer) WriteSequential(ctx context.Context, data []byte) error {
+	file, err := os.OpenFile(w.cfg.OutputPath, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	if w.cfg.UseDirectIO {
+		w.enableDirectIO(file)
+	}
+
+	bufPtr := w.bufferPool.Get().(*[]byte)
+	defer w.bufferPool.Put(bufPtr)
+
+	buffer := *bufPtr
+	var written int64
+
+	for written < int64(len(data)) {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
+		toWrite := int64(len(buffer))
+		if written+toWrite > int64(len(data)) {
+			toWrite = int64(len(data)) - written
+		}
+
+		copy(buffer, data[written:written+toWrite])
+
+		n, err := file.WriteAt(buffer[:toWrite], written)
+		if err != nil {
+			return err
+		}
+
+		written += int64(n)
+		w.metrics.AddBytesWritten(int64(n))
+	}
+
+	return nil
+}
+
+// CreateEmptyFile creates an empty file with the given size (sparse file)
+func (w *Writer) CreateEmptyFile(ctx context.Context, sizeBytes int64) error {
+	file, err := os.OpenFile(w.cfg.OutputPath, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Create sparse file by seeking to end-1 and writing a single byte
+	_, err = file.Seek(sizeBytes-1, 0)
+	if err != nil {
+		return err
+	}
+
+	_, err = file.Write([]byte{0})
+	return err
+}
+
 // Flush ensures all data is written to disk
 func (w *Writer) Flush() error {
 	file, err := os.OpenFile(w.cfg.OutputPath, os.O_RDONLY, 0)
@@ -209,16 +319,6 @@ func (w *Writer) Flush() error {
 	}
 	defer file.Close()
 	return file.Sync()
-}
-
-func (w *Writer) enableDirectIO(file *os.File) error {
-	fd := file.Fd()
-	flags, err := unix.FcntlInt(fd, unix.F_GETFL, 0)
-	if err != nil {
-		return err
-	}
-	_, err = unix.FcntlInt(fd, unix.F_SETFL, flags|unix.O_DIRECT)
-	return err
 }
 
 // GetMetrics returns the metrics collector

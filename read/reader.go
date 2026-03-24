@@ -11,7 +11,6 @@ import (
 	"os"
 	"sync"
 
-	"golang.org/x/sys/unix"
 	"pmjtoca/largefileRWer/config"
 	"pmjtoca/largefileRWer/internal/checkpoint"
 	"pmjtoca/largefileRWer/internal/metrics"
@@ -46,6 +45,7 @@ func NewReader(cfg *config.Config) (*Reader, error) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
+	// Create buffer pool with aligned buffers for direct I/O
 	bufferPool := &sync.Pool{
 		New: func() interface{} {
 			buf := make([]byte, cfg.GetBufferSizeBytes()+cfg.DirectIOAlignment)
@@ -54,6 +54,7 @@ func NewReader(cfg *config.Config) (*Reader, error) {
 		},
 	}
 
+	// Setup hash function based on configuration
 	var hashFunc func([]byte) []byte
 	switch cfg.ChecksumAlgorithm {
 	case "sha256":
@@ -73,6 +74,7 @@ func NewReader(cfg *config.Config) (*Reader, error) {
 		}
 	}
 
+	// Initialize checkpoint manager
 	checkpointMgr := checkpoint.NewManager(cfg.GetCheckpointPath())
 	if err := checkpointMgr.Load(); err != nil {
 		slog.Warn("Failed to load checkpoint", "error", err)
@@ -111,6 +113,7 @@ func (r *Reader) ReadAll(ctx context.Context) (<-chan *Chunk, <-chan error) {
 			"size_gb", float64(fileSize)/(1024*1024*1024),
 			"workers", r.cfg.Workers)
 
+		// Choose strategy based on file size and configuration
 		if fileSize < 1024*1024*1024 {
 			r.readSmallFile(ctx, chunkChan, errChan)
 		} else if r.cfg.UseMmap {
@@ -123,6 +126,7 @@ func (r *Reader) ReadAll(ctx context.Context) (<-chan *Chunk, <-chan error) {
 	return chunkChan, errChan
 }
 
+// readSmallFile handles files under 1GB with simple buffered I/O
 func (r *Reader) readSmallFile(ctx context.Context, chunkChan chan<- *Chunk, errChan chan<- error) {
 	file, err := os.Open(r.cfg.InputPath)
 	if err != nil {
@@ -188,6 +192,7 @@ func (r *Reader) readSmallFile(ctx context.Context, chunkChan chan<- *Chunk, err
 	}
 }
 
+// readWithParallelChunks reads file by splitting into parallel chunks
 func (r *Reader) readWithParallelChunks(ctx context.Context, fileSize int64,
 	chunkChan chan<- *Chunk, errChan chan<- error) {
 
@@ -222,6 +227,7 @@ func (r *Reader) readWithParallelChunks(ctx context.Context, fileSize int64,
 		default:
 		}
 
+		// Skip already processed chunks
 		if r.checkpoint.IsCompleted(chunkID) {
 			slog.Debug("Skipping completed chunk", "chunk_id", chunkID)
 			continue
@@ -233,6 +239,7 @@ func (r *Reader) readWithParallelChunks(ctx context.Context, fileSize int64,
 			length = fileSize - offset
 		}
 
+		// Acquire worker slot
 		select {
 		case r.workerPool <- struct{}{}:
 		case <-ctx.Done():
@@ -267,6 +274,7 @@ func (r *Reader) readWithParallelChunks(ctx context.Context, fileSize int64,
 			r.metrics.AddChunkRead()
 			r.checkpoint.MarkCompleted(id)
 
+			// Periodic checkpoint save
 			if id%r.cfg.CheckpointInterval == 0 {
 				if err := r.checkpoint.Save(); err != nil {
 					slog.Warn("Failed to save checkpoint", "error", err)
@@ -282,6 +290,7 @@ func (r *Reader) readWithParallelChunks(ctx context.Context, fileSize int64,
 	}
 }
 
+// readChunk reads a single chunk from the file
 func (r *Reader) readChunk(file *os.File, chunkID int, offset, length int64) (*Chunk, error) {
 	bufPtr := r.bufferPool.Get().(*[]byte)
 	defer r.bufferPool.Put(bufPtr)
@@ -297,6 +306,7 @@ func (r *Reader) readChunk(file *os.File, chunkID int, offset, length int64) (*C
 		return nil, fmt.Errorf("chunk %d read error: %w", chunkID, err)
 	}
 
+	// Create a copy to avoid buffer reuse issues
 	dataCopy := make([]byte, n)
 	copy(dataCopy, data[:n])
 
@@ -315,20 +325,16 @@ func (r *Reader) readChunk(file *os.File, chunkID int, offset, length int64) (*C
 	}, nil
 }
 
+// readWithMmap uses memory-mapped I/O for random access patterns
 func (r *Reader) readWithMmap(ctx context.Context, fileSize int64,
 	chunkChan chan<- *Chunk, errChan chan<- error) {
-	// mmap implementation would go here
-	errChan <- fmt.Errorf("mmap not implemented in this version")
-}
 
-func (r *Reader) enableDirectIO(file *os.File) error {
-	fd := file.Fd()
-	flags, err := unix.FcntlInt(fd, unix.F_GETFL, 0)
-	if err != nil {
-		return err
-	}
-	_, err = unix.FcntlInt(fd, unix.F_SETFL, flags|unix.O_DIRECT)
-	return err
+	slog.Info("Using mmap for reading", "file_size_gb", float64(fileSize)/(1024*1024*1024))
+
+	// Note: mmap implementation would go here
+	// For now, fall back to parallel chunks
+	slog.Warn("mmap not fully implemented, falling back to parallel chunks")
+	r.readWithParallelChunks(ctx, fileSize, chunkChan, errChan)
 }
 
 // GetMetrics returns the metrics collector
