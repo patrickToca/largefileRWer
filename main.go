@@ -19,10 +19,10 @@ import (
 
 var (
 	// Command-line flags
-	inputFile  = flag.String("input", "", "Input file path (required)")
-	outputFile = flag.String("output", "", "Output file path (required)")
-	configFile = flag.String("config", "", "Configuration file (CUE or JSON)")
-	profile    = flag.String("profile", "", "Configuration profile (production, development, nvme, hdd, network, lowmem, auto)")
+	inputFile   = flag.String("input", "", "Input file path (required)")
+	outputFile  = flag.String("output", "", "Output file path (required)")
+	configFile  = flag.String("config", "", "Configuration file (CUE or JSON)")
+	profile     = flag.String("profile", "", "Configuration profile (production, development, nvme, hdd, network, lowmem, auto)")
 
 	// Override flags
 	workers     = flag.Int("workers", 0, "Override: number of workers")
@@ -247,12 +247,12 @@ func loadConfiguration() (*config.Config, error) {
 	// Apply command-line overrides (highest priority)
 	// Only override if the flag was explicitly set (non-zero values)
 	overrideCfg := &config.Config{
-		InputPath:        *inputFile,
-		OutputPath:       *outputFile,
-		EnableVerbose:    *verbose,
-		VerifyChecksum:   *verify,
-		UseMmap:          *useMmap,
-		UseDirectIO:      *useDirectIO,
+		InputPath:       *inputFile,
+		OutputPath:      *outputFile,
+		EnableVerbose:   *verbose,
+		VerifyChecksum:  *verify,
+		UseMmap:         *useMmap,
+		UseDirectIO:     *useDirectIO,
 		EnableCheckpoint: *checkpoint,
 	}
 
