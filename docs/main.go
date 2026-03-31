@@ -4,6 +4,7 @@ import (
     "fmt"
     "html/template"
     "net/http"
+    "strings"
 )
 
 // Templates
@@ -11,7 +12,7 @@ var indexTemplate = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login Page</title>
+    <title>MyPage - Example Page 1</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,6 +50,12 @@ var indexTemplate = `
             color: red;
             margin-bottom: 15px;
         }
+        .page-indicator {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -56,7 +63,7 @@ var indexTemplate = `
     {{if .Error}}
     <div class="error">{{.Error}}</div>
     {{end}}
-    <form method="POST" action="/">
+    <form method="POST" action="/mypage_example_page1">
         <div class="form-group">
             <label for="surname">SURNAME:</label>
             <input type="text" id="surname" name="surname" required>
@@ -67,6 +74,7 @@ var indexTemplate = `
         </div>
         <button type="submit">Submit</button>
     </form>
+    <div class="page-indicator">You are on: mypage_example_page1</div>
 </body>
 </html>
 `
@@ -75,7 +83,7 @@ var secondPageTemplate = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Second Page</title>
+    <title>MyPage - Example Page 2</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -94,13 +102,20 @@ var secondPageTemplate = `
         button:hover {
             background-color: #45a049;
         }
+        .page-indicator {
+            text-align: center;
+            color: #666;
+            margin-top: 50px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
     <h2>Welcome!</h2>
-    <form method="POST" action="/third">
+    <form method="POST" action="/mypage_example_page3">
         <button type="submit">Go to Third Page</button>
     </form>
+    <div class="page-indicator">You are on: mypage_example_page2</div>
 </body>
 </html>
 `
@@ -109,7 +124,7 @@ var thirdPageTemplate = `
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Third Page</title>
+    <title>MyPage - Example Page 3</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -133,6 +148,12 @@ var thirdPageTemplate = `
         button:hover {
             background-color: #007B9E;
         }
+        .page-indicator {
+            text-align: center;
+            color: #666;
+            margin-top: 50px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -140,9 +161,10 @@ var thirdPageTemplate = `
         <h2>You've reached the third page!</h2>
         <p>Congratulations! 🎉</p>
     </div>
-    <form method="GET" action="/">
+    <form method="GET" action="/mypage_example_page1">
         <button type="submit">Go Back to Start</button>
     </form>
+    <div class="page-indicator">You are on: mypage_example_page3</div>
 </body>
 </html>
 `
@@ -153,21 +175,21 @@ func main() {
     secondTmpl := template.Must(template.New("second").Parse(secondPageTemplate))
     thirdTmpl := template.Must(template.New("third").Parse(thirdPageTemplate))
 
-    // Handler for the main page
-    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    // Handler for page 1 (login page)
+    http.HandleFunc("/mypage_example_page1", func(w http.ResponseWriter, r *http.Request) {
         if r.Method == "POST" {
             surname := r.FormValue("surname")
             firstname := r.FormValue("firstname")
 
             // Check if credentials match TOCA PATRICK
-            if surname == "TOCA" && firstname == "PATRICK" {
+            if strings.ToUpper(surname) == "TOCA" && strings.ToUpper(firstname) == "PATRICK" {
                 // Store in session (using cookie for simplicity)
                 http.SetCookie(w, &http.Cookie{
                     Name:  "authenticated",
                     Value: "true",
                     Path:  "/",
                 })
-                http.Redirect(w, r, "/second", http.StatusSeeOther)
+                http.Redirect(w, r, "/mypage_example_page2", http.StatusSeeOther)
                 return
             }
 
@@ -185,23 +207,23 @@ func main() {
         indexTmpl.Execute(w, nil)
     })
 
-    // Handler for second page
-    http.HandleFunc("/second", func(w http.ResponseWriter, r *http.Request) {
+    // Handler for page 2
+    http.HandleFunc("/mypage_example_page2", func(w http.ResponseWriter, r *http.Request) {
         // Check if user is authenticated
         cookie, err := r.Cookie("authenticated")
         if err != nil || cookie.Value != "true" {
-            http.Redirect(w, r, "/", http.StatusSeeOther)
+            http.Redirect(w, r, "/mypage_example_page1", http.StatusSeeOther)
             return
         }
         secondTmpl.Execute(w, nil)
     })
 
-    // Handler for third page
-    http.HandleFunc("/third", func(w http.ResponseWriter, r *http.Request) {
+    // Handler for page 3
+    http.HandleFunc("/mypage_example_page3", func(w http.ResponseWriter, r *http.Request) {
         // Check if user is authenticated
         cookie, err := r.Cookie("authenticated")
         if err != nil || cookie.Value != "true" {
-            http.Redirect(w, r, "/", http.StatusSeeOther)
+            http.Redirect(w, r, "/mypage_example_page1", http.StatusSeeOther)
             return
         }
 
@@ -210,12 +232,18 @@ func main() {
             return
         }
 
-        // If not POST, redirect to second page
-        http.Redirect(w, r, "/second", http.StatusSeeOther)
+        // If not POST, redirect to page 2
+        http.Redirect(w, r, "/mypage_example_page2", http.StatusSeeOther)
+    })
+
+    // Redirect root to the first page
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        http.Redirect(w, r, "/mypage_example_page1", http.StatusSeeOther)
     })
 
     // Start the server
     fmt.Println("Server starting on http://localhost:8080")
+    fmt.Println("Access the site at: http://localhost:8080/mypage_example_page1")
     if err := http.ListenAndServe(":8080", nil); err != nil {
         fmt.Printf("Server failed to start: %v\n", err)
     }
