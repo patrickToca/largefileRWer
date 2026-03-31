@@ -1,0 +1,11 @@
+https://www.nationwide.co.uk/help/online-banking-help/log-in-to-the-internet-bank/  page 1: Initial with userID
+
+https://onlinebanking.nationwide.co.uk/AccessManagement/IdentifyCustomer/IdentifyCustomer page 2: User
+
+https://onlinebanking.nationwide.co.uk/AccessManagement/Login/IdentifyCustomerForLogin   page 3: Login  tab - Card Reader
+
+here : 2 fields    5202    and   code:
+
+https://onlinebanking.nationwide.co.uk/ib/accounts   page with main information    page 4
+
+https://onlinebanking.nationwide.co.uk/ib/accounts/statement/1     page 5 statement CC
