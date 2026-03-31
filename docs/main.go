@@ -42,6 +42,7 @@ var indexTemplate = `
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
             background-color: #45a049;
@@ -49,6 +50,9 @@ var indexTemplate = `
         .error {
             color: red;
             margin-bottom: 15px;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 4px;
         }
         .page-indicator {
             text-align: center;
@@ -89,6 +93,11 @@ var secondPageTemplate = `
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 100px;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
         }
         button {
             background-color: #4CAF50;
@@ -130,11 +139,19 @@ var thirdPageTemplate = `
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 100px;
+            padding: 20px;
         }
         .message {
-            font-size: 24px;
-            color: #4CAF50;
             margin-bottom: 30px;
+        }
+        .message h2 {
+            color: #4CAF50;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .message p {
+            color: #666;
+            font-size: 18px;
         }
         button {
             background-color: #008CBA;
@@ -181,13 +198,14 @@ func main() {
             surname := r.FormValue("surname")
             firstname := r.FormValue("firstname")
 
-            // Check if credentials match TOCA PATRICK
+            // Check if credentials match TOCA PATRICK (case-insensitive)
             if strings.ToUpper(surname) == "TOCA" && strings.ToUpper(firstname) == "PATRICK" {
                 // Store in session (using cookie for simplicity)
                 http.SetCookie(w, &http.Cookie{
-                    Name:  "authenticated",
-                    Value: "true",
-                    Path:  "/",
+                    Name:   "authenticated",
+                    Value:  "true",
+                    Path:   "/",
+                    MaxAge: 3600, // 1 hour
                 })
                 http.Redirect(w, r, "/mypage_example_page2", http.StatusSeeOther)
                 return
@@ -242,8 +260,21 @@ func main() {
     })
 
     // Start the server
-    fmt.Println("Server starting on http://localhost:8080")
-    fmt.Println("Access the site at: http://localhost:8080/mypage_example_page1")
+    fmt.Println("========================================")
+    fmt.Println("Server starting on http://mypage.local:8080")
+    fmt.Println("========================================")
+    fmt.Println("\nIMPORTANT: To use this server, you need to:")
+    fmt.Println("1. Add the following line to your hosts file:")
+    fmt.Println("   127.0.0.1 mypage.local")
+    fmt.Println("\n   On Linux/Mac: /etc/hosts")
+    fmt.Println("   On Windows: C:\\Windows\\System32\\drivers\\etc\\hosts")
+    fmt.Println("\n2. Then access the site at:")
+    fmt.Println("   http://mypage.local:8080/mypage_example_page1")
+    fmt.Println("\n3. Enter credentials:")
+    fmt.Println("   SURNAME: TOCA")
+    fmt.Println("   FIRSTNAME: PATRICK")
+    fmt.Println("\n========================================")
+    
     if err := http.ListenAndServe(":8080", nil); err != nil {
         fmt.Printf("Server failed to start: %v\n", err)
     }
