@@ -8,7 +8,7 @@ import (
 
 func InitPage3() {
     // Parse the external HTML template
-    tmpl := template.Must(template.ParseFiles(filepath.Join("templates", "page3.html")))
+    tmpl := template.Must(template.ParseFiles(filepath.Join("templates", "html", "page3.html")))
     
     http.HandleFunc("/mypage_example_page3", func(w http.ResponseWriter, r *http.Request) {
         // Check if user is authenticated

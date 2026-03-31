@@ -9,7 +9,7 @@ import (
 
 func InitPage1() {
     // Parse the external HTML template
-    tmpl := template.Must(template.ParseFiles(filepath.Join("templates", "page1.html")))
+    tmpl := template.Must(template.ParseFiles(filepath.Join("templates", "html", "page1.html")))
     
     http.HandleFunc("/mypage_example_page1", func(w http.ResponseWriter, r *http.Request) {
         if r.Method == "POST" {

@@ -6,6 +6,9 @@ import (
 )
 
 func main() {
+    // Serve static files (CSS)
+    http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("templates"))))
+
     // Initialize all page handlers
     InitPage1()
     InitPage2()
