@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPage - Example Page 4 (Banking Overview)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MyPage - Banking Overview</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -13,28 +13,52 @@
     <link rel="stylesheet" href="/static/css/page4.css">
 </head>
 <body>
-    <div class="container">
-        <div class="banking-card">
-            <div class="banking-header">
-                <h1>🏦 Online Banking Overview</h1>
-                <p>Nationwide Account Summary</p>
-            </div>
-            
-            <div class="svg-container">
-                <object type="image/svg+xml" data="/img/onlinebanking.nationwide_co_uk.svg" class="banking-svg">
-                    Your browser does not support SVG
-                </object>
-            </div>
-            
-            <div class="banking-footer">
-                <form method="GET" action="/mypage_example_page1">
-                    <button type="submit" class="back-button">← Back to Start</button>
+    <div class="fullscreen-svg" id="svgContainer">
+        <img src="/img/onlinebanking.nationwide_co_uk.svg" alt="Banking Overview" id="bankingSvg" class="fullscreen-svg-image">
+        
+        <!-- Control buttons overlay -->
+        <div class="controls-container">
+            <div class="button-group">
+                <form method="GET" action="/mypage_example_page1" style="display: inline-block;">
+                    <button type="submit" class="control-button">← Back</button>
                 </form>
-                <div class="page-indicator">
-                    📄 You are on: mypage_example_page4
-                </div>
+                <button class="control-button" id="fullscreenBtn">⛶ Fullscreen</button>
+            </div>
+            <div class="page-indicator">
+                📄 mypage_example_page4
             </div>
         </div>
     </div>
+
+    <script>
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const svgContainer = document.getElementById('svgContainer');
+        
+        fullscreenBtn.addEventListener('click', function() {
+            if (svgContainer.requestFullscreen) {
+                svgContainer.requestFullscreen();
+            } else if (svgContainer.webkitRequestFullscreen) { /* Safari */
+                svgContainer.webkitRequestFullscreen();
+            } else if (svgContainer.msRequestFullscreen) { /* IE/Edge */
+                svgContainer.msRequestFullscreen();
+            }
+            
+            // Change button text
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = '✕ Exit';
+            } else {
+                fullscreenBtn.textContent = '⛶ Fullscreen';
+            }
+        });
+        
+        // Update button text when fullscreen changes
+        document.addEventListener('fullscreenchange', function() {
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = '✕ Exit';
+            } else {
+                fullscreenBtn.textContent = '⛶ Fullscreen';
+            }
+        });
+    </script>
 </body>
 </html>
