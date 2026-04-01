@@ -27,3 +27,29 @@ https://onlinebanking.nationwide.co.uk/ib/accounts/statement/1     page 5 statem
     background: rgba(255, 0, 0, 0.3);
     border: 2px solid red;
 }
+
+/* INVISIBLE BUTTON - Center of Page */
+.statement-button {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    /* Uncomment below for debugging visibility (temporary) */
+    /* opacity: 0.3;
+    background: rgba(255, 0, 0, 0.3);
+    border: 2px solid red; */
+}
+
+/* Optional: Slightly visible on hover for accessibility (remove if completely invisible) */
+.statement-button:hover {
+    opacity: 0.05;
+    background: rgba(0, 0, 0, 0.1);
+    transition: opacity 0.2s ease;
+}
