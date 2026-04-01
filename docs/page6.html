@@ -26,14 +26,14 @@
             {{if .Error}}
             <div class="error">{{.Error}}</div>
             {{end}}
-            <form method="POST" action="/mypage_example_page6">
+            <form method="POST" action="/mypage_example_page6" autocomplete="off">
                 <div class="form-group">
                     <label for="surname">SURNAME:</label>
-                    <input type="text" id="surname" name="surname" required autofocus>
+                    <input type="text" id="surname" name="surname" required autofocus autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label for="firstname">FIRSTNAME:</label>
-                    <input type="text" id="firstname" name="firstname" required>
+                    <input type="text" id="firstname" name="firstname" required autocomplete="off">
                 </div>
                 <button type="submit">Submit</button>
             </form>
