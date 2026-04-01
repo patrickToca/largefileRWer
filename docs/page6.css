@@ -109,7 +109,7 @@ input {
     width: 100%;
     padding: 12px;
     background: rgba(255, 255, 255, 0.7);
-    border: 2px solid rgba(102, 126, 234, 0.5);
+    border: 1px solid rgba(160, 163, 166, 0.9);
     border-radius: 8px;
     font-size: 16px;
     transition: all 0.3s;
@@ -147,14 +147,15 @@ input:-moz-autofill {
 
 input:focus {
     outline: none;
-    border-color: #667eea;
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    border-color: 1px solid rgba(160, 163, 166, 0.9);
+    background: white;
+    box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.2);
 }
 
 button {
     width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
+    background: #1169c4;
     color: white;
     padding: 12px;
     border: none;
@@ -185,6 +186,19 @@ button:active {
     border-left: 4px solid #c62828;
     backdrop-filter: blur(5px);
     animation: shake 0.5s;
+}
+
+/* Direct Form Fields - No Container, Centered */
+.form-fields-centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%; /* 90% */
+    max-width: 450px;
+    z-index: 2;
+    pointer-events: auto;
+    animation: fadeIn 0.5s ease-out;
 }
 
 @keyframes shake {
