@@ -9,3 +9,21 @@ here : 2 fields    5202    and   code:
 https://onlinebanking.nationwide.co.uk/ib/accounts   page with main information    page 4
 
 https://onlinebanking.nationwide.co.uk/ib/accounts/statement/1     page 5 statement CC
+
+/* INVISIBLE BUTTON - Bottom Left Corner */
+.statement-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 100px;
+    height: 100px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    /* Uncomment below for debugging visibility (temporary) */
+    opacity: 0.3;
+    background: rgba(255, 0, 0, 0.3);
+    border: 2px solid red;
+}
