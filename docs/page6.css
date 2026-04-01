@@ -134,7 +134,7 @@ body {
     z-index: 3;
 }
 
-/* Input styling */
+/* Input styling - UPDATED with left alignment */
 input {
     width: 100%;
     padding: var(--input-padding, 12px 16px);
@@ -144,8 +144,8 @@ input {
     font-size: var(--input-font-size, 16px);
     transition: all 0.3s;
     font-family: monospace;
-    text-align: center;
-    letter-spacing: 2px;
+    text-align: left;  /* Changed from center to left */
+    letter-spacing: normal;  /* Removed extra letter spacing */
 }
 
 input:focus {
