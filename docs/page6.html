@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MyPage - Banking Overview</title>
+    <title>Login - MyPage</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -18,43 +18,40 @@
         <img src="/img/identifyCustomerForLogin.svg"
              class="fullscreen-svg-image"
              id="bankingImage"
-             alt="Banking Overview">
+             alt="Banking Login">
         
-        <!-- Container for independently positioned form elements -->
+        <!-- Container for form elements -->
         <div class="form-elements-container">
-            <form method="POST" action="/mypage_example_page6" autocomplete="off">
-                <!-- Title - Independent position -->
-                <!--<h2 class="form-title">Enter Your Information</h2>-->
-                <h2 class="form-title"></h2>
+            <!-- Form navigates to page4 when submitted -->
+            <form method="GET" action="/mypage_example_page4" autocomplete="off">
+                <h2 class="form-title">Sign In</h2>
                 
-                <!-- Error message - Independent position -->
-                {{if .Error}}
-                <div class="error">{{.Error}}</div>
-                {{end}}
-                
-                <!-- Surname field - Independent position -->
+                <!-- Surname field - accepts digits -->
                 <div class="form-group-surname">
-                    <!--<label for="surname">SURNAME:</label>-->
-                    <input type="text" id="surname" name="surname" required autofocus autocomplete="off">
+                    <input type="text" 
+                           id="surname" 
+                           name="surname" 
+                           placeholder="Enter digits (e.g., 12345)" 
+                           autocomplete="off">
                 </div>
                 
-                <!-- Firstname field - Independent position -->
+                <!-- Firstname field - accepts digits -->
                 <div class="form-group-firstname">
-                    <!--<label for="firstname">FIRSTNAME:</label>-->
-                    <input type="text" id="firstname" name="firstname" required autocomplete="off">
+                    <input type="text" 
+                           id="firstname" 
+                           name="firstname" 
+                           placeholder="Enter digits (e.g., 67890)" 
+                           autocomplete="off">
                 </div>
                 
-                <!-- Login button - Independent position and styling -->
+                <!-- Login button - navigates to page4 -->
                 <button type="submit" class="login-button">Log in</button>
             </form>
         </div>
         
-        <!-- INVISIBLE BUTTON - Centered -->
-        <a href="/mypage_example_page5" class="statement-button" id="statementButton" aria-label="Statement">Statement</a>
-        
         <!-- Page indicator -->
         <div class="page-indicator">
-            📄 mypage_example_page6
+            📄 Page 6: Login (Enter Digits)
         </div>
     </div>
     
