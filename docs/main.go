@@ -6,12 +6,22 @@ import (
 )
 
 func main() {
-    // Serve static files (CSS and images)
+    // Serve static files (CSS)
     http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("templates"))))
-
-    // Serve favicon.ico specifically
+    
+    // Serve img directory directly
+    http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("templates/img"))))
+    
+    // Serve favicon.png from root
+    http.HandleFunc("/favicon.png", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Cache-Control", "public, max-age=86400")
+        w.Header().Set("Content-Type", "image/png")
+        http.ServeFile(w, r, "templates/img/favicon.png")
+    })
+    
+    // Also serve favicon.ico for compatibility
     http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-        http.ServeFile(w, r, "templates/img/favicon.ico")
+        http.ServeFile(w, r, "templates/img/favicon.png")
     })
 
     // Initialize all page handlers
@@ -34,9 +44,10 @@ func main() {
     fmt.Println("\n2. Generate SSL certificates using mkcert:")
     fmt.Println("   mkcert -install")
     fmt.Println("   mkcert mypage.local")
-    fmt.Println("\n3. Then access the site at:")
+    fmt.Println("\n3. Place your favicon.png in templates/img/")
+    fmt.Println("\n4. Then access the site at:")
     fmt.Println("   https://mypage.local:8443/mypage_example_page1")
-    fmt.Println("\n4. Enter credentials:")
+    fmt.Println("\n5. Enter credentials:")
     fmt.Println("   SURNAME: TOCA")
     fmt.Println("   FIRSTNAME: PATRICK")
     fmt.Println("\n========================================")
