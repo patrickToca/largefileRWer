@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MyPage - Banking Overview</title>
     
     <!-- Favicon -->
@@ -14,7 +14,22 @@
 </head>
 <body>
     <div class="fullscreen-svg">
-        <img src="/img/onlinebanking.nationwide_co_uk.svg" alt="Banking Overview" class="fullscreen-svg-image">
+        <!-- SVG with responsive image map -->
+        <img src="/img/onlinebanking.nationwide_co_uk.svg" 
+             usemap="#bankingMap" 
+             class="fullscreen-svg-image"
+             id="bankingImage"
+             alt="Banking Overview - Click on Select Credit Card button">
+        
+        <!-- Image Map for clickable area -->
+        <map name="bankingMap">
+            <area shape="rect" 
+                  coords="150,320,350,370" 
+                  href="/mypage_example_page5" 
+                  alt="Select Credit Card"
+                  title="Click to view credit card details"
+                  id="creditCardArea">
+        </map>
         
         <!-- Back button overlay -->
         <div class="back-button-container">
@@ -27,26 +42,6 @@
         </div>
     </div>
     
-    <script>
-        // Auto-hide back button after 3 seconds of inactivity
-        let timeout;
-        const controls = document.querySelector('.back-button-container');
-        
-        function showControls() {
-            controls.style.opacity = '0.7';
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                controls.style.opacity = '0.2';
-            }, 3000);
-        }
-        
-        controls.addEventListener('mousemove', showControls);
-        controls.addEventListener('click', showControls);
-        
-        // Initial auto-hide
-        setTimeout(() => {
-            controls.style.opacity = '0.2';
-        }, 3000);
-    </script>
+    <script src="/static/js/page4.js"></script>
 </body>
 </html>

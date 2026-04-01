@@ -42,10 +42,9 @@ body {
     height: 100%;
     object-fit: contain;
     display: block;
-    cursor: pointer;
 }
 
-/* Back button container */
+/* Back button container - positioned on top of SVG */
 .back-button-container {
     position: fixed;
     bottom: 20px;
@@ -99,13 +98,7 @@ body {
     opacity: 0.8;
 }
 
-/* Hover effect on clickable area */
-.fullscreen-svg-image:hover {
-    filter: brightness(0.98);
-    transition: filter 0.3s ease;
-}
-
-/* Responsive adjustments */
+/* For mobile devices */
 @media (max-width: 768px) {
     .back-button-container {
         padding: 10px 16px;
@@ -125,6 +118,7 @@ body {
     }
 }
 
+/* For very small screens */
 @media (max-width: 480px) {
     .back-button-container {
         padding: 8px 12px;
@@ -148,11 +142,17 @@ body {
     display: none;
 }
 
+/* For Firefox */
 * {
     scrollbar-width: none;
+}
+
+/* Ensure no margins or padding on any element */
+* {
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Prevent text selection on double-click */
 body {
     user-select: none;
     -webkit-user-select: none;
