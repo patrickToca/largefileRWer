@@ -24,7 +24,8 @@
         <div class="form-elements-container">
             <form method="POST" action="/mypage_example_page6" autocomplete="off">
                 <!-- Title - Independent position -->
-                <h2 class="form-title">Enter Your Information</h2>
+                <!--<h2 class="form-title">Enter Your Information</h2>-->
+                <h2 class="form-title"></h2>
                 
                 <!-- Error message - Independent position -->
                 {{if .Error}}
@@ -33,18 +34,18 @@
                 
                 <!-- Surname field - Independent position -->
                 <div class="form-group-surname">
-                    <label for="surname">SURNAME:</label>
+                    <!--<label for="surname">SURNAME:</label>-->
                     <input type="text" id="surname" name="surname" required autofocus autocomplete="off">
                 </div>
                 
                 <!-- Firstname field - Independent position -->
                 <div class="form-group-firstname">
-                    <label for="firstname">FIRSTNAME:</label>
+                    <!--<label for="firstname">FIRSTNAME:</label>-->
                     <input type="text" id="firstname" name="firstname" required autocomplete="off">
                 </div>
                 
                 <!-- Login button - Independent position and styling -->
-                <button type="submit" class="login-button">Submit</button>
+                <button type="submit" class="login-button">Log in</button>
             </form>
         </div>
         
