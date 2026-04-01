@@ -53,3 +53,17 @@ https://onlinebanking.nationwide.co.uk/ib/accounts/statement/1     page 5 statem
     background: rgba(0, 0, 0, 0.1);
     transition: opacity 0.2s ease;
 }
+
+
+/* Direct Form Fields - No Container, Centered */
+.form-fields-centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 450px;
+    z-index: 2;
+    pointer-events: auto;
+    animation: fadeIn 0.5s ease-out;
+}

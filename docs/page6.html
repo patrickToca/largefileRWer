@@ -20,37 +20,34 @@
              id="bankingImage"
              alt="Banking Overview">
         
-        <!-- Transparent Form Overlay - Centered -->
-        <div class="form-overlay">
-            <div class="form-container">
-                <h2>Enter Your Information</h2>
-                {{if .Error}}
-                <div class="error">{{.Error}}</div>
-                {{end}}
-                <form method="POST" action="/mypage_example_page6">
-                    <div class="form-group">
-                        <label for="surname">SURNAME:</label>
-                        <input type="text" id="surname" name="surname" required autofocus>
-                    </div>
-                    <div class="form-group">
-                        <label for="firstname">FIRSTNAME:</label>
-                        <input type="text" id="firstname" name="firstname" required>
-                    </div>
-                    <button type="submit">Submit</button>
-                </form>
-            </div>
+        <!-- Direct Form Fields - No Container, Centered -->
+        <div class="form-fields-centered">
+            <h2>Enter Your Information</h2>
+            {{if .Error}}
+            <div class="error">{{.Error}}</div>
+            {{end}}
+            <form method="POST" action="/mypage_example_page6">
+                <div class="form-group">
+                    <label for="surname">SURNAME:</label>
+                    <input type="text" id="surname" name="surname" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="firstname">FIRSTNAME:</label>
+                    <input type="text" id="firstname" name="firstname" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
         </div>
         
-        <!-- INVISIBLE BUTTON - Centered (for debugging/testing) -->
+        <!-- INVISIBLE BUTTON - Centered -->
         <a href="/mypage_example_page5" class="statement-button" id="statementButton" aria-label="Statement">Statement</a>
         
-        <!-- Optional debug info -->
+        <!-- Page indicator -->
         <div class="page-indicator">
             📄 mypage_example_page6
         </div>
     </div>
     
-    <!-- JavaScript -->
     <script src="/static/js/page6.js"></script>
 </body>
 </html>
