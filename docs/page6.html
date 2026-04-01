@@ -22,8 +22,8 @@
         
         <!-- Container for form elements -->
         <div class="form-elements-container">
-            <!-- Form navigates to page4 when submitted -->
-            <form method="GET" action="/mypage_example_page4" autocomplete="off">
+            <!-- Form with JavaScript override -->
+            <form id="loginForm" autocomplete="off">
                 <h2 class="form-title">Sign In</h2>
                 
                 <!-- Surname field - accepts digits -->
@@ -44,7 +44,7 @@
                            autocomplete="off">
                 </div>
                 
-                <!-- Login button - navigates to page4 -->
+                <!-- Login button -->
                 <button type="submit" class="login-button">Log in</button>
             </form>
         </div>
@@ -55,6 +55,42 @@
         </div>
     </div>
     
-    <script src="/static/js/page6.js"></script>
+    <script>
+        // Override form submission to go to page4
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            // Get values
+            const surname = document.getElementById('surname').value;
+            const firstname = document.getElementById('firstname').value;
+            
+            // Build URL
+            let url = '/mypage_example_page4';
+            const params = new URLSearchParams();
+            if (surname) params.append('surname', surname);
+            if (firstname) params.append('firstname', firstname);
+            if (params.toString()) url += '?' + params.toString();
+            
+            // Navigate
+            window.location.href = url;
+        });
+        
+        // Allow only digits
+        document.addEventListener('DOMContentLoaded', function() {
+            const surnameInput = document.getElementById('surname');
+            const firstnameInput = document.getElementById('firstname');
+            
+            function allowOnlyDigits(input) {
+                if (input) {
+                    input.addEventListener('input', function() {
+                        this.value = this.value.replace(/[^\d]/g, '');
+                    });
+                }
+            }
+            
+            allowOnlyDigits(surnameInput);
+            allowOnlyDigits(firstnameInput);
+        });
+    </script>
 </body>
 </html>
