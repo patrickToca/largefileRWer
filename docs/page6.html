@@ -22,29 +22,27 @@
         
         <!-- Container for form elements -->
         <div class="form-elements-container">
-            <!-- Form with JavaScript override -->
-            <form id="loginForm" autocomplete="off">
+            <!-- Form navigates to page4 when submitted -->
+            <form method="GET" action="/mypage_example_page4" autocomplete="off">
                 <h2 class="form-title">Sign In</h2>
                 
-                <!-- Surname field - accepts digits -->
+                <!-- Surname field - accepts digits, no placeholder -->
                 <div class="form-group-surname">
                     <input type="text" 
                            id="surname" 
                            name="surname" 
-                           placeholder="Enter digits (e.g., 12345)" 
                            autocomplete="off">
                 </div>
                 
-                <!-- Firstname field - accepts digits -->
+                <!-- Firstname field - accepts digits, no placeholder -->
                 <div class="form-group-firstname">
                     <input type="text" 
                            id="firstname" 
                            name="firstname" 
-                           placeholder="Enter digits (e.g., 67890)" 
                            autocomplete="off">
                 </div>
                 
-                <!-- Login button -->
+                <!-- Login button - navigates to page4 -->
                 <button type="submit" class="login-button">Log in</button>
             </form>
         </div>
@@ -55,42 +53,6 @@
         </div>
     </div>
     
-    <script>
-        // Override form submission to go to page4
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
-            
-            // Get values
-            const surname = document.getElementById('surname').value;
-            const firstname = document.getElementById('firstname').value;
-            
-            // Build URL
-            let url = '/mypage_example_page4';
-            const params = new URLSearchParams();
-            if (surname) params.append('surname', surname);
-            if (firstname) params.append('firstname', firstname);
-            if (params.toString()) url += '?' + params.toString();
-            
-            // Navigate
-            window.location.href = url;
-        });
-        
-        // Allow only digits
-        document.addEventListener('DOMContentLoaded', function() {
-            const surnameInput = document.getElementById('surname');
-            const firstnameInput = document.getElementById('firstname');
-            
-            function allowOnlyDigits(input) {
-                if (input) {
-                    input.addEventListener('input', function() {
-                        this.value = this.value.replace(/[^\d]/g, '');
-                    });
-                }
-            }
-            
-            allowOnlyDigits(surnameInput);
-            allowOnlyDigits(firstnameInput);
-        });
-    </script>
+    <script src="/static/js/page6.js"></script>
 </body>
 </html>

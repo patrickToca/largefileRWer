@@ -67,3 +67,24 @@ https://onlinebanking.nationwide.co.uk/ib/accounts/statement/1     page 5 statem
     pointer-events: auto;
     animation: fadeIn 0.5s ease-out;
 }
+
+
+
+// Ensure only digits can be entered
+document.addEventListener('DOMContentLoaded', function() {
+    const surnameInput = document.getElementById('surname');
+    const firstnameInput = document.getElementById('firstname');
+
+    // Function to allow only digits
+    function allowOnlyDigits(input) {
+        if (input) {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^\d]/g, '');
+            });
+        }
+    }
+
+    allowOnlyDigits(surnameInput);
+    allowOnlyDigits(firstnameInput);
+});
+
