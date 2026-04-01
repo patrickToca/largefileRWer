@@ -28,6 +28,7 @@ func main() {
     InitPage1()
     InitPage2()
     InitPage3()
+    InitPage4() // Add the new page
 
     // Redirect root to page 1
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -44,12 +45,14 @@ func main() {
     fmt.Println("\n2. Generate SSL certificates using mkcert:")
     fmt.Println("   mkcert -install")
     fmt.Println("   mkcert mypage.local")
-    fmt.Println("\n3. Place your favicon.png in templates/img/")
+    fmt.Println("\n3. Place your favicon.png and SVG file in templates/img/")
     fmt.Println("\n4. Then access the site at:")
     fmt.Println("   https://mypage.local:8443/mypage_example_page1")
     fmt.Println("\n5. Enter credentials:")
     fmt.Println("   SURNAME: TOCA")
     fmt.Println("   FIRSTNAME: PATRICK")
+    fmt.Println("\n6. After login, you can access page 4 at:")
+    fmt.Println("   https://mypage.local:8443/mypage_example_page4")
     fmt.Println("\n========================================")
     
     // Start HTTPS server with mkcert certificates
