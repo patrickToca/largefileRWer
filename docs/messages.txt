@@ -90,3 +90,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <title>Your accounts | Nationwide internet bank</title>
+
+.responsive-image {
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    display: block;
+    margin: 0 auto;
+    cursor: grab;
+}
+
+.responsive-image:active {
+    cursor: grabbing;
+}
