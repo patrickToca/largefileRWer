@@ -13,52 +13,40 @@
     <link rel="stylesheet" href="/static/css/page4.css">
 </head>
 <body>
-    <div class="fullscreen-svg" id="svgContainer">
-        <img src="/img/onlinebanking.nationwide_co_uk.svg" alt="Banking Overview" id="bankingSvg" class="fullscreen-svg-image">
+    <div class="fullscreen-svg">
+        <img src="/img/onlinebanking.nationwide_co_uk.svg" alt="Banking Overview" class="fullscreen-svg-image">
         
-        <!-- Control buttons overlay -->
-        <div class="controls-container">
-            <div class="button-group">
-                <form method="GET" action="/mypage_example_page1" style="display: inline-block;">
-                    <button type="submit" class="control-button">← Back</button>
-                </form>
-                <button class="control-button" id="fullscreenBtn">⛶ Fullscreen</button>
-            </div>
+        <!-- Back button overlay -->
+        <div class="back-button-container">
+            <form method="GET" action="/mypage_example_page1">
+                <button type="submit" class="back-button">← Back to Start</button>
+            </form>
             <div class="page-indicator">
                 📄 mypage_example_page4
             </div>
         </div>
     </div>
-
+    
     <script>
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        const svgContainer = document.getElementById('svgContainer');
+        // Auto-hide back button after 3 seconds of inactivity
+        let timeout;
+        const controls = document.querySelector('.back-button-container');
         
-        fullscreenBtn.addEventListener('click', function() {
-            if (svgContainer.requestFullscreen) {
-                svgContainer.requestFullscreen();
-            } else if (svgContainer.webkitRequestFullscreen) { /* Safari */
-                svgContainer.webkitRequestFullscreen();
-            } else if (svgContainer.msRequestFullscreen) { /* IE/Edge */
-                svgContainer.msRequestFullscreen();
-            }
-            
-            // Change button text
-            if (document.fullscreenElement) {
-                fullscreenBtn.textContent = '✕ Exit';
-            } else {
-                fullscreenBtn.textContent = '⛶ Fullscreen';
-            }
-        });
+        function showControls() {
+            controls.style.opacity = '0.7';
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                controls.style.opacity = '0.2';
+            }, 3000);
+        }
         
-        // Update button text when fullscreen changes
-        document.addEventListener('fullscreenchange', function() {
-            if (document.fullscreenElement) {
-                fullscreenBtn.textContent = '✕ Exit';
-            } else {
-                fullscreenBtn.textContent = '⛶ Fullscreen';
-            }
-        });
+        controls.addEventListener('mousemove', showControls);
+        controls.addEventListener('click', showControls);
+        
+        // Initial auto-hide
+        setTimeout(() => {
+            controls.style.opacity = '0.2';
+        }, 3000);
     </script>
 </body>
 </html>
