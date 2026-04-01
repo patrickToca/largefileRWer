@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MyPage - Banking Overview</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
+    
+    <link rel="stylesheet" href="/static/css/page4.css">
+</head>
+<body>
+    <div class="fullscreen-svg">
+        <!-- IMAGE MAP APPROACH: img tag with usemap attribute -->
+        <img src="/img/onlinebanking.nationwide_co_uk.svg" 
+             usemap="#bankingMap" 
+             class="fullscreen-svg-image"
+             id="bankingImage"
+             alt="Banking Overview - Click on Select Credit Card button">
+        
+        <!-- IMAGE MAP APPROACH: map definition with area tags -->
+        <map name="bankingMap">
+            <area shape="rect" 
+                  coords="150,320,350,370" 
+                  href="/mypage_example_page5" 
+                  alt="Select Credit Card"
+                  title="Click to view credit card details">
+        </map>
+        
+        <!-- Back button overlay -->
+        <div class="back-button-container">
+            <form method="GET" action="/mypage_example_page1">
+                <button type="submit" class="back-button">← Back to Start</button>
+            </form>
+            <div class="page-indicator">
+                📄 mypage_example_page4
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript for responsive coordinates and auto-hide controls -->
+    <script src="/static/js/page4.js"></script>
+</body>
+</html>
