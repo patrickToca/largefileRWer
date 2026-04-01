@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Nationwide | Online Banking Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef2f5;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* main card container - mimics the SVG canvas area */
+        .bank-card {
+            max-width: 1050px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* header / banner area - extracted from SVG pattern */
+        .banner-area {
+            background: #002b49; /* Nationwide deep navy */
+            padding: 28px 32px 24px;
+            color: white;
+            border-bottom: 4px solid #ffc107;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .logo span:first-child {
+            font-weight: 800;
+            background: white;
+            color: #002b49;
+            padding: 0 6px 0 8px;
+            border-radius: 40px;
+            font-size: 26px;
+        }
+
+        .logo span:last-child {
+            font-weight: 500;
+            font-size: 26px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 8px;
+            font-weight: 400;
+        }
+
+        /* main content layout: two columns */
+        .login-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .login-form-section {
+            flex: 1;
+            padding: 40px 36px;
+            background: #ffffff;
+        }
+
+        .illustration-section {
+            flex: 1;
+            background: #f9fbfd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 30px;
+            border-left: 1px solid #e2e8f0;
+        }
+
+        /* form styling */
+        .form-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #0a2540;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: #5b6e8c;
+            font-size: 15px;
+            margin-bottom: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #1f2a44;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            border: 1px solid #ccd7e6;
+            border-radius: 14px;
+            background: white;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #002b49;
+            box-shadow: 0 0 0 3px rgba(0, 43, 73, 0.1);
+        }
+
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2c3e66;
+        }
+
+        .forgot-link {
+            color: #0077b6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            background: #002b49;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .login-btn:hover {
+            background: #004b6e;
+        }
+
+        .login-btn:active {
+            transform: scale(0.98);
+        }
+
+        .register-prompt {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 14px;
+            color: #4a5b7a;
+        }
+
+        .register-prompt a {
+            color: #002b49;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* SVG illustration area — redesigned modern graphic based on original elements */
+        .svg-illustration {
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .secure-icon {
+            background: #eef2fa;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .secure-icon svg {
+            width: 48px;
+            height: 48px;
+            stroke: #002b49;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .illustration-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0a2540;
+            margin-bottom: 12px;
+        }
+
+        .illustration-section p {
+            color: #5b6e8c;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .feature-list {
+            list-style: none;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            font-size: 14px;
+            color: #1f2a44;
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            background: #d4e6f1;
+            width: 22px;
+            height: 22px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #002b49;
+        }
+
+        /* footer / security note */
+        .security-footer {
+            background: #f8fafc;
+            padding: 16px 32px;
+            border-top: 1px solid #e4e9f0;
+            font-size: 12px;
+            color: #5f6c84;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .security-footer span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* responsiveness */
+        @media (max-width: 780px) {
+            .login-container {
+                flex-direction: column;
+            }
+            .illustration-section {
+                border-left: none;
+                border-top: 1px solid #e2e8f0;
+                padding: 30px 20px;
+            }
+            .login-form-section {
+                padding: 30px 24px;
+            }
+            .banner-area {
+                padding: 20px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="bank-card">
+    <!-- header similar to SVG banner -->
+    <div class="banner-area">
+        <div class="logo">
+            <span>Nationwide</span>
+            <span>Building Society</span>
+        </div>
+        <div class="tagline">Online Banking | Secure login</div>
+    </div>
+
+    <div class="login-container">
+        <!-- LEFT: login form (mirrors original SVG textual area) -->
+        <div class="login-form-section">
+            <div class="form-header">
+                <h2>Log in</h2>
+                <p>Access your accounts securely</p>
+            </div>
+            <form action="#" method="post">
+                <div class="input-group">
+                    <label>Customer number</label>
+                    <input type="text" placeholder="e.g. 12345678" autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <label>Passcode / memorable word</label>
+                    <input type="password" placeholder="··········" autocomplete="current-password">
+                </div>
+                <div class="options-row">
+                    <label class="remember">
+                        <input type="checkbox"> Remember customer number
+                    </label>
+                    <a href="#" class="forgot-link">Forgotten details?</a>
+                </div>
+                <button type="submit" class="login-btn">Log in securely</button>
+                <div class="register-prompt">
+                    Not registered? <a href="#">Register for online banking</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- RIGHT: illustration & feature list (inspired by the SVG design / bank security context) -->
+        <div class="illustration-section">
+            <div class="svg-illustration">
+                <div class="secure-icon">
+                    <svg viewBox="0 0 24 24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3L3 7v7c0 5.5 9 7 9 7s9-1.5 9-7V7l-9-4z" />
+                        <path d="M12 12 L12 16 M9 13 L12 12 L15 13" />
+                        <circle cx="12" cy="12" r="1.5" fill="#002b49" stroke="none" />
+                    </svg>
+                </div>
+                <h3>Banking that moves with you</h3>
+                <p>Manage money, pay bills, and view transactions — all with peace of mind.</p>
+                <ul class="feature-list">
+                    <li>24/7 secure access</li>
+                    <li>Faster payments & transfers</li>
+                    <li>Real-time fraud monitoring</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- footer mimicking extra info from SVG metadata / trust elements -->
+    <div class="security-footer">
+        <span>🔒 Encrypted connection (TLS 1.3)</span>
+        <span>🏦 FSCS protected</span>
+        <span>📞 Help & support</span>
+    </div>
+</div>
+</body>
+</html>
