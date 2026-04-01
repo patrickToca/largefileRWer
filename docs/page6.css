@@ -4,21 +4,56 @@
     box-sizing: border-box;
 }
 
-/* CSS Variables for easy positioning adjustment */
+/* CSS Variables for independent positioning of each element */
 :root {
-    /* Form positioning - adjust these values for precise placement */
-    --form-position-top: 200px;      /* Y coordinate from top */
-    --form-position-left: 100px;     /* X coordinate from left */
-    --form-width: 60%;               /* Width percentage */
-    --form-max-width: 450px;         /* Maximum width */
+    /* Surname field positioning */
+    --surname-top: 280px;
+    --surname-left: 800px;
+    --surname-width: 250px;
+    --surname-height: auto;
     
-    /* Alternative positioning using bottom/right (uncomment to use) */
-    /* --form-position-bottom: 200px; */   /* Y coordinate from bottom */
-    /* --form-position-right: 100px; */    /* X coordinate from right */
+    /* Firstname field positioning */
+    --firstname-top: 340px;
+    --firstname-left: 800px;
+    --firstname-width: 250px;
+    --firstname-height: auto;
+    
+    /* Login button positioning */
+    --button-top: 400px;
+    --button-left: 800px;
+    --button-width: 250px;
+    --button-height: auto;
+    
+    /* Title positioning (optional) */
+    --title-top: 220px;
+    --title-left: 800px;
+    --title-width: 250px;
+    
+    /* Error message positioning (optional) */
+    --error-top: 250px;
+    --error-left: 800px;
+    --error-width: 250px;
+    
+    /* Input fields styling */
+    --input-padding: 10px 12px;
+    --input-font-size: 14px;
+    --input-border-radius: 6px;
+    --input-border-color: rgba(160, 163, 166, 0.9);
+    --input-background: rgba(255, 255, 255, 0.8);
+    --input-background-focus: white;
+    
+    /* Button styling - Independent from inputs */
+    --button-padding: 10px 12px;
+    --button-font-size: 14px;
+    --button-font-weight: 600;
+    --button-border-radius: 6px;
+    --button-background: #1169c4;
+    --button-background-hover: #0e58a8;
+    --button-color: white;
     
     /* Invisible button positioning */
-    --button-position-top: 50%;
-    --button-position-left: 50%;
+    --invisible-button-top: 50%;
+    --invisible-button-left: 50%;
     
     /* Page indicator positioning */
     --indicator-bottom: 20px;
@@ -63,31 +98,170 @@ body {
     display: block;
 }
 
-/* Form Overlay - Centered with NO visible container */
-.form-overlay {
+/* Container for all form elements - allows absolute positioning */
+.form-elements-container {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     z-index: 2;
     pointer-events: none;
 }
 
-.form-container {
-    background: transparent;
-    border-radius: 0;
-    padding: 20px;
-    max-width: 450px;
-    width: 90%;
-    box-shadow: none;
-    border: none;
-    backdrop-filter: none;
+/* Make form elements interactive */
+.form-elements-container form,
+.form-elements-container .form-group,
+.form-elements-container input,
+.form-elements-container button,
+.form-elements-container h2,
+.form-elements-container .error {
     pointer-events: auto;
-    animation: fadeIn 0.5s ease-out;
+}
+
+/* Title styling - Independent positioning */
+.form-title {
+    position: absolute;
+    top: var(--title-top, 220px);
+    left: var(--title-left, 800px);
+    width: var(--title-width, 250px);
+    color: #333;
+    font-size: 20px;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+    background: transparent;
+    margin: 0;
+    text-align: left;
+    z-index: 3;
+}
+
+/* Error message styling - Independent positioning */
+.error {
+    position: absolute;
+    top: var(--error-top, 250px);
+    left: var(--error-left, 800px);
+    width: var(--error-width, 250px);
+    background-color: rgba(255, 235, 238, 0.9);
+    color: #c62828;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 4px solid #c62828;
+    backdrop-filter: blur(5px);
+    animation: shake 0.5s;
+    font-size: 12px;
+    z-index: 3;
+    margin: 0;
+}
+
+/* Surname field group - Independent positioning */
+.form-group-surname {
+    position: absolute;
+    top: var(--surname-top, 280px);
+    left: var(--surname-left, 800px);
+    width: var(--surname-width, 250px);
+    margin: 0;
+    z-index: 3;
+}
+
+/* Firstname field group - Independent positioning */
+.form-group-firstname {
+    position: absolute;
+    top: var(--firstname-top, 340px);
+    left: var(--firstname-left, 800px);
+    width: var(--firstname-width, 250px);
+    margin: 0;
+    z-index: 3;
+}
+
+/* Label styling */
+label {
+    display: block;
+    margin-bottom: 6px;
+    color: #333;
+    font-weight: 600;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+    background: transparent;
+    letter-spacing: 0.5px;
+}
+
+/* Input styling with autofill suppression */
+input {
+    width: 100%;
+    padding: var(--input-padding, 10px 12px);
+    background: var(--input-background, rgba(255, 255, 255, 0.8));
+    border: 1px solid var(--input-border-color, rgba(160, 163, 166, 0.9));
+    border-radius: var(--input-border-radius, 6px);
+    font-size: var(--input-font-size, 14px);
+    transition: all 0.3s;
+    backdrop-filter: blur(5px);
+    /* Disable autofill background color */
+    -webkit-text-fill-color: #000000;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.8) inset;
+    box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.8) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Remove autofill popup styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-text-fill-color: #000000;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.8) inset;
+    box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.8) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Disable autocomplete dropdown */
+input:-internal-autofill-selected {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    background-image: none !important;
+    color: #000000 !important;
+}
+
+/* For Firefox */
+input:-moz-autofill {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    color: #000000 !important;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--input-border-color, rgba(160, 163, 166, 0.9));
+    background: var(--input-background-focus, white);
+    box-shadow: 0 0 0 1px rgba(17, 105, 196, 0.2);
+}
+
+/* Login button - Independent positioning and styling */
+.login-button {
+    position: absolute;
+    top: var(--button-top, 400px);
+    left: var(--button-left, 800px);
+    width: var(--button-width, 250px);
+    background: var(--button-background, #1169c4);
+    color: var(--button-color, white);
+    padding: var(--button-padding, 10px 12px);
+    border: none;
+    border-radius: var(--button-border-radius, 6px);
+    font-size: var(--button-font-size, 14px);
+    font-weight: var(--button-font-weight, 600);
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0.95;
+    z-index: 3;
+    margin: 0;
+}
+
+.login-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    background: var(--button-background-hover, #0e58a8);
+}
+
+.login-button:active {
+    transform: translateY(0);
 }
 
 @keyframes fadeIn {
@@ -101,143 +275,6 @@ body {
     }
 }
 
-h2 {
-    color: #333;
-    margin-bottom: 25px;
-    text-align: center;
-    font-size: 28px;
-    font-weight: 600;
-    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
-    background: transparent;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 8px;
-    color: #333;
-    font-weight: 600;
-    font-size: 14px;
-    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
-    background: transparent;
-}
-
-/* Input styling with autofill suppression */
-input {
-    width: 100%;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(160, 163, 166, 0.9);
-    border-radius: 8px;
-    font-size: 16px;
-    transition: all 0.3s;
-    backdrop-filter: blur(5px);
-    /* Disable autofill background color */
-    -webkit-text-fill-color: #000000;
-    -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.7) inset;
-    box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.7) inset;
-    transition: background-color 5000s ease-in-out 0s;
-}
-
-/* Remove autofill popup styling */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-    -webkit-text-fill-color: #000000;
-    -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.7) inset;
-    box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.7) inset;
-    transition: background-color 5000s ease-in-out 0s;
-}
-
-/* Disable autocomplete dropdown */
-input:-internal-autofill-selected {
-    background-color: rgba(255, 255, 255, 0.7) !important;
-    background-image: none !important;
-    color: #000000 !important;
-}
-
-/* For Firefox */
-input:-moz-autofill {
-    background-color: rgba(255, 255, 255, 0.7) !important;
-    color: #000000 !important;
-}
-
-input:focus {
-    outline: none;
-    border-color: 1px solid rgba(160, 163, 166, 0.9);
-    background: white;
-    box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.2);
-}
-
-button {
-    width: 100%;
-    /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
-    background: #1169c4;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    opacity: 0.95;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    opacity: 1;
-}
-
-button:active {
-    transform: translateY(0);
-}
-
-.error {
-    background-color: rgba(255, 235, 238, 0.9);
-    color: #c62828;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border-left: 4px solid #c62828;
-    backdrop-filter: blur(5px);
-    animation: shake 0.5s;
-}
-
-/* Direct Form Fields - Using CSS Variables for positioning */
-.form-fields-centered {
-    position: absolute;
-    /* Using variables for top/left positioning */
-    top: var(--form-position-top, 200px);
-    left: var(--form-position-left, 100px);
-    /* Alternative: use bottom/right positioning (uncomment if needed) */
-    /* bottom: var(--form-position-bottom, auto); */
-    /* right: var(--form-position-right, auto); */
-    width: var(--form-width, 60%);
-    max-width: var(--form-max-width, 450px);
-    z-index: 2;
-    pointer-events: auto;
-    animation: fadeIn 0.5s ease-out;
-}
-
-/* If you prefer to use transform centering, uncomment this and comment the above */
-/* .form-fields-centered {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: var(--form-width, 60%);
-    max-width: var(--form-max-width, 450px);
-    z-index: 2;
-    pointer-events: auto;
-    animation: fadeIn 0.5s ease-out;
-} */
-
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
@@ -247,8 +284,8 @@ button:active {
 /* INVISIBLE BUTTON - Using CSS Variables for positioning */
 .statement-button {
     position: fixed;
-    top: var(--button-position-top, 50%);
-    left: var(--button-position-left, 50%);
+    top: var(--invisible-button-top, 50%);
+    left: var(--invisible-button-left, 50%);
     transform: translate(-50%, -50%);
     width: 100px;
     height: 100px;
@@ -284,25 +321,21 @@ button:active {
     z-index: 3;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments - can also override positions per screen size */
 @media (max-width: 768px) {
-    .form-container {
-        padding: 15px;
-        max-width: 400px;
-    }
-    
-    h2 {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-    
-    input, button {
-        padding: 10px;
-        font-size: 14px;
-    }
-    
-    label {
-        font-size: 13px;
+    :root {
+        --surname-top: 200px;
+        --surname-left: 50px;
+        --firstname-top: 260px;
+        --firstname-left: 50px;
+        --button-top: 320px;
+        --button-left: 50px;
+        --title-top: 140px;
+        --title-left: 50px;
+        --surname-width: 220px;
+        --firstname-width: 220px;
+        --button-width: 220px;
+        --title-width: 220px;
     }
     
     .statement-button {
@@ -315,38 +348,26 @@ button:active {
         right: 15px;
         font-size: 9px;
     }
-    
-    /* Adjust form position for tablet */
-    .form-fields-centered {
-        --form-position-top: 150px;
-        --form-position-left: 50px;
-        --form-width: 70%;
-    }
 }
 
 @media (max-width: 480px) {
-    .form-container {
-        padding: 10px;
-        max-width: 320px;
-    }
-    
-    h2 {
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
-    
-    .form-group {
-        margin-bottom: 15px;
-    }
-    
-    label {
-        font-size: 12px;
-        margin-bottom: 5px;
-    }
-    
-    input, button {
-        padding: 8px;
-        font-size: 13px;
+    :root {
+        --surname-top: 180px;
+        --surname-left: 30px;
+        --firstname-top: 240px;
+        --firstname-left: 30px;
+        --button-top: 300px;
+        --button-left: 30px;
+        --title-top: 120px;
+        --title-left: 30px;
+        --surname-width: 180px;
+        --firstname-width: 180px;
+        --button-width: 180px;
+        --title-width: 180px;
+        --input-padding: 8px 10px;
+        --input-font-size: 12px;
+        --button-padding: 8px 10px;
+        --button-font-size: 12px;
     }
     
     .statement-button {
@@ -358,13 +379,6 @@ button:active {
         bottom: 10px;
         right: 10px;
         font-size: 8px;
-    }
-    
-    /* Adjust form position for mobile */
-    .form-fields-centered {
-        --form-position-top: 100px;
-        --form-position-left: 30px;
-        --form-width: 80%;
     }
 }
 
