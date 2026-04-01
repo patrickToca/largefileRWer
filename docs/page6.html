@@ -15,7 +15,7 @@
 <body>
     <div class="fullscreen-svg">
         <!-- IMAGE MAP APPROACH: img tag with usemap attribute -->
-        <img src="/img/onlinebanking.nationwide_co_uk.svg" 
+        <img src="/img/identifyCustomerForLogin.svg"
              usemap="#bankingMap" 
              class="fullscreen-svg-image"
              id="bankingImage"
@@ -23,25 +23,38 @@
         
         <!-- IMAGE MAP APPROACH: map definition with area tags -->
         <map name="bankingMap">
-            <area shape="rect" 
-                  coords="150,320,350,370" 
-                  href="/mypage_example_page5" 
-                  alt="Select Credit Card"
-                  title="Click to view credit card details">
+            <h2>Enter Your Information</h2>
+            {{if .Error}}
+            <div class="error">{{.Error}}</div>
+            {{end}}
+            <form method="POST" action="/mypage_example_page1">
+                <div class="form-group">
+                    <label for="surname">SURNAME:</label>
+                    <input type="text" id="surname" name="surname" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="firstname">FIRSTNAME:</label>
+                    <input type="text" id="firstname" name="firstname" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="page-indicator">
+                📄 You are on: mypage_example_page1
+            </div>
         </map>
         
         <!-- INVISIBLE BUTTON - Bottom Left Corner -->
         <a href="/mypage_example_page5" class="statement-button" id="statementButton" aria-label="Statement">Statement</a>
         
         <!-- Back button overlay -->
-        <div class="back-button-container">
+        <!--<div class="back-button-container">
             <form method="GET" action="/mypage_example_page1">
                 <button type="submit" class="back-button">← Back to Start</button>
             </form>
             <div class="page-indicator">
                 📄 mypage_example_page4
             </div>
-        </div>
+        </div>-->
     </div>
     
     <!-- JavaScript for responsive coordinates and auto-hide controls -->
